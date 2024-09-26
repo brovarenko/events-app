@@ -1,8 +1,9 @@
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { PrismaClient } = require('@prisma/client');
+const db = new PrismaClient();
 
 async function main() {
-  await prisma.event.createMany({
+  await db.event.createMany({
     data: [
       {
         title: 'Event 1',
@@ -23,4 +24,4 @@ async function main() {
 main()
   .then(() => console.log('Seed complete'))
   .catch((e) => console.error(e))
-  .finally(async () => await prisma.$disconnect());
+  .finally(async () => await db.$disconnect());
