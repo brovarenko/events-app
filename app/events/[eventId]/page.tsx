@@ -1,0 +1,67 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+
+interface Participant {
+  fullName: string;
+  email: string;
+}
+
+interface EventData {
+  eventName: string;
+  participants: Participant[];
+}
+
+const ParticipantsPage = ({ params }: { params: { eventId: string } }) => {
+  const { eventId } = params;
+
+  const [eventData, setEventData] = useState<EventData | null>(null);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (eventId) {
+      const fetchEventData = async () => {
+        try {
+          const response = await fetch(`/api/events/${eventId}`);
+          const data = await response.json();
+          if (response.ok) {
+            setEventData(data);
+          } else {
+            setError('Failed to load event details.');
+          }
+        } catch (err) {
+          console.log(err);
+          setError('An error occurred. Please try again later.');
+        }
+      };
+
+      fetchEventData();
+    }
+  }, [eventId]);
+
+  return (
+    <div className='container mx-auto py-8'>
+      {eventData ? (
+        <>
+          <h1 className='text-3xl font-bold mb-6'>
+            {eventData.eventName} Participants
+          </h1>
+          <div className='grid grid-cols-3 gap-4'>
+            {eventData.participants.map((participant, index) => (
+              <div key={index} className='border p-4 rounded-md shadow'>
+                <h2 className='text-xl font-semibold'>
+                  {participant.fullName}
+                </h2>
+                <p>{participant.email}</p>
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <p>{error || 'Loading...'}</p>
+      )}
+    </div>
+  );
+};
+
+export default ParticipantsPage;
