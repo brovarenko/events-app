@@ -8,8 +8,18 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get('page') as string) || 1;
     const limit = parseInt(searchParams.get('limit') as string) || 6;
     const skip = (page - 1) * limit;
+    const sortBy = searchParams.get('sortBy');
+    const sortOrder = searchParams.get('sortOrder');
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const orderBy: any = {};
+
+    if (sortBy && sortOrder) {
+      orderBy[sortBy as string] = sortOrder as string;
+    }
 
     const events = await db.event.findMany({
+      orderBy,
       skip,
       take: limit,
     });

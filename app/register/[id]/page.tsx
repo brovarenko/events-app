@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from 'next/navigation';
+import { Button } from '@/components/ui/button';
 
 interface RegistrationForm {
   fullName: string;
@@ -65,11 +66,13 @@ const RegisterPage = ({ params }: { params: { id: string } }) => {
 
   return (
     <div className='container mx-auto py-8'>
-      <h1 className='text-3xl font-bold mb-6'>Register for Event</h1>
+      <h1 className='text-3xl font-bold mb-6 text-center'>
+        Register for Event
+      </h1>
       {serverError && <p className='text-red-500'>{serverError}</p>}
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className='grid grid-cols-1 gap-4 max-w-md'
+        className='grid grid-cols-1 gap-4 max-w-md mx-auto'
       >
         <div>
           <input
@@ -129,12 +132,7 @@ const RegisterPage = ({ params }: { params: { id: string } }) => {
           )}
         </div>
 
-        <button
-          type='submit'
-          className='bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600'
-        >
-          Register
-        </button>
+        <Button type='submit'>Register</Button>
       </form>
     </div>
   );
