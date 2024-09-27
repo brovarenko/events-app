@@ -18,13 +18,24 @@ const ParticipantsPage = ({ params }: { params: { eventId: string } }) => {
   const [eventData, setEventData] = useState<EventData | null>(null);
   const [error, setError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(searchQuery);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchQuery]);
 
   useEffect(() => {
     if (eventId) {
       const fetchEventData = async () => {
         try {
           const response = await fetch(
-            `/api/events/${eventId}?searchQuery=${searchQuery}`
+            `/api/events/${eventId}?searchQuery=${debouncedSearchQuery}`
           );
           const data = await response.json();
           console.log(data);
@@ -41,7 +52,7 @@ const ParticipantsPage = ({ params }: { params: { eventId: string } }) => {
 
       fetchEventData();
     }
-  }, [eventId, searchQuery]);
+  }, [eventId, debouncedSearchQuery]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
