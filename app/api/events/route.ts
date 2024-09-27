@@ -4,10 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 export async function GET(req: NextRequest) {
   try {
     const searchParams = req.nextUrl.searchParams;
-
-    const page = parseInt(searchParams.get('page') as string) || 1;
-    const limit = parseInt(searchParams.get('limit') as string) || 6;
-    const skip = (page - 1) * limit;
+    const limit = parseInt(searchParams.get('limit') as string) || 10;
     const sortBy = searchParams.get('sortBy');
     const sortOrder = searchParams.get('sortOrder');
 
@@ -20,17 +17,11 @@ export async function GET(req: NextRequest) {
 
     const events = await db.event.findMany({
       orderBy,
-      skip,
+      skip: parseInt(searchParams.get('offset') as string) || 0,
       take: limit,
     });
 
-    const totalEvents = await db.event.count();
-
-    return Response.json({
-      events,
-      totalPages: Math.ceil(totalEvents / limit),
-      currentPage: page,
-    });
+    return Response.json(events);
   } catch (error) {
     console.log(error);
     return new NextResponse('Internal Error', { status: 500 });
