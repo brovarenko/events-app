@@ -5,7 +5,9 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { eventId: string } }
 ) {
+  const searchParams = req.nextUrl.searchParams;
   const eventId = params.eventId;
+  const searchQuery = searchParams.get('searchQuery');
 
   try {
     const event = await db.event.findUnique({
@@ -21,9 +23,19 @@ export async function GET(
       return Response.json({ error: 'Event not found' });
     }
 
+    const filteredParticipants = event.registrations.filter(
+      (participant) =>
+        participant.fullName
+          .toLowerCase()
+          .includes((searchQuery || '').toString().toLowerCase()) ||
+        participant.email
+          .toLowerCase()
+          .includes((searchQuery || '').toString().toLowerCase())
+    );
+
     return Response.json({
       eventName: event.title,
-      participants: event.registrations.map((p) => ({
+      participants: filteredParticipants.map((p) => ({
         fullName: p.fullName,
         email: p.email,
       })),

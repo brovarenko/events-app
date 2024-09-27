@@ -17,13 +17,17 @@ const ParticipantsPage = ({ params }: { params: { eventId: string } }) => {
 
   const [eventData, setEventData] = useState<EventData | null>(null);
   const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     if (eventId) {
       const fetchEventData = async () => {
         try {
-          const response = await fetch(`/api/events/${eventId}`);
+          const response = await fetch(
+            `/api/events/${eventId}?searchQuery=${searchQuery}`
+          );
           const data = await response.json();
+          console.log(data);
           if (response.ok) {
             setEventData(data);
           } else {
@@ -37,7 +41,11 @@ const ParticipantsPage = ({ params }: { params: { eventId: string } }) => {
 
       fetchEventData();
     }
-  }, [eventId]);
+  }, [eventId, searchQuery]);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
 
   return (
     <div className='container mx-auto py-8'>
@@ -46,15 +54,30 @@ const ParticipantsPage = ({ params }: { params: { eventId: string } }) => {
           <h1 className='text-3xl font-bold mb-6'>
             {eventData.eventName} Participants
           </h1>
+
+          <div className='mb-6 w-1/3'>
+            <input
+              type='text'
+              placeholder='Search participants by name or email'
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className='p-2 border rounded-md w-full'
+            />
+          </div>
+
           <div className='grid grid-cols-3 gap-4'>
-            {eventData.participants.map((participant, index) => (
-              <div key={index} className='border p-4 rounded-md shadow'>
-                <h2 className='text-xl font-semibold'>
-                  {participant.fullName}
-                </h2>
-                <p>{participant.email}</p>
-              </div>
-            ))}
+            {eventData.participants.length > 0 ? (
+              eventData.participants.map((participant, index) => (
+                <div key={index} className='border p-4 rounded-md shadow'>
+                  <h2 className='text-xl font-semibold'>
+                    {participant.fullName}
+                  </h2>
+                  <p>{participant.email}</p>
+                </div>
+              ))
+            ) : (
+              <p>No participants found.</p>
+            )}
           </div>
         </>
       ) : (
