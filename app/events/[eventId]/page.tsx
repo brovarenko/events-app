@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import ParticipantsChart from '@/components/participants-chart';
 
 interface Participant {
   fullName: string;
@@ -65,8 +66,9 @@ const ParticipantsPage = ({ params }: { params: { eventId: string } }) => {
           <h1 className='text-3xl font-bold mb-6'>
             {eventData.eventName} Participants
           </h1>
+          <ParticipantsChart eventId={eventId} />
 
-          <div className='mb-6 w-1/3'>
+          <div className='mt-6 mb-6 w-1/3'>
             <input
               type='text'
               placeholder='Search participants by name or email'

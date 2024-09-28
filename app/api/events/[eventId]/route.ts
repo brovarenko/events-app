@@ -42,6 +42,6 @@ export async function GET(
     });
   } catch (error) {
     console.log(error);
-    Response.json({ error: 'Failed to load participants' });
+    return Response.json({ error: 'Failed to load participants' });
   }
 }
